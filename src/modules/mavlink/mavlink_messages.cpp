@@ -699,7 +699,19 @@ protected:
 			msg.temperature = sensor.baro_temp_celcius;
 			msg.fields_updated = fields_updated;
 
-			_mavlink->send_message(MAVLINK_MSG_ID_HIGHRES_IMU, &msg);
+			//_mavlink->send_message(MAVLINK_MSG_ID_HIGHRES_IMU, &msg);
+      {
+        static int count = 0;
+        static hrt_abstime t_start = hrt_absolute_time();
+        static int n = 200;
+        if(count++ == n){
+          hrt_abstime now = hrt_absolute_time();
+          warnx("Highres IMU rate: %0.2f", (double) 1e6*n/(now - t_start));
+          warnx("meh %0.2f", (double) msg.xacc);
+          t_start = now;
+          count = 0;
+        }
+      }
 		}
 	}
 };
